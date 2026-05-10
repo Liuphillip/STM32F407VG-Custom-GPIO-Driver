@@ -1,8 +1,13 @@
 #include <stdint.h>
 
-uint8_t helloworld;
+volatile uint8_t Flag = 0;
 
 int main(void){
-    helloworld = 1;
+    
+    while(1){
+        if (Flag) break;
+    }
+    while(1){
+    }
     return 0;
 }
