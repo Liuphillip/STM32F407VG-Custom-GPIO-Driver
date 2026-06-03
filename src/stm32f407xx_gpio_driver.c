@@ -32,3 +32,15 @@ void GPIO_Init(GPIO_RegDef_t * GPIOx, GPIO_PinConf_t GPIOPinConf){
     }
 
 }
+
+void GPIO_WritePin(GPIO_RegDef_t * GPIOx, uint8_t PinNumber, GPIO_PinState_e PinState){
+
+    if (PinState == GPIO_PIN_LOW){
+        //clear the output pin
+        GPIOx->ODR &= ~(0x01U << PinNumber);
+    }
+    else{
+        // set the output pin
+        GPIOx->ODR |= (0x01U << PinNumber);
+    }
+}

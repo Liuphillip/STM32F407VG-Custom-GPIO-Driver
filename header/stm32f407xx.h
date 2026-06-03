@@ -17,6 +17,40 @@ typedef struct
     volatile uint32_t AFRH;
 }GPIO_RegDef_t;
 
+// RCC register definition struct
+typedef struct{
+    volatile uint32_t CR;
+    volatile uint32_t PLLCFGR;
+    volatile uint32_t CFGR;
+    volatile uint32_t CIR;
+    volatile uint32_t AHB1RSTR;
+    volatile uint32_t AHB2RSTR;
+    volatile uint32_t AHB3RSTR;
+             uint32_t RESERVED0;
+    volatile uint32_t APB1RSTR;
+    volatile uint32_t APB2RSTR;
+             uint32_t RESERVED1[2];
+    volatile uint32_t AHB1ENR;
+    volatile uint32_t AHB2ENR;
+    volatile uint32_t AHB3ENR;
+             uint32_t RESERVED2;
+    volatile uint32_t APB1ENR;
+    volatile uint32_t APB2ENR;
+             uint32_t RESERVED3[2];
+    volatile uint32_t AHB1LPENR;
+    volatile uint32_t AHB2LPENR;
+    volatile uint32_t AHB3LPENR;
+             uint32_t RESERVED4;
+    volatile uint32_t APB1LPENR;
+    volatile uint32_t APB2LPENR;
+             uint32_t RESERVED5[2];
+    volatile uint32_t BDCR;
+    volatile uint32_t CSR;
+    volatile uint32_t SSCGR;
+    volatile uint32_t PLLI2SCFGR;
+
+}RCC_RegDef_t;
+
 /* peripheral base addresses */
 #define AHB1_BASEADDR (0x40020000UL)
 #define GPIOA ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x0000UL))
@@ -30,6 +64,32 @@ typedef struct
 #define GPIOI ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2000UL))
 #define GPIOJ ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2400UL))
 #define GPIOK ((GPIO_RegDef_t *) (AHB1_BASEADDR + 0x2800UL))
+
+// RCC base address
+#define RCC ((RCC_RegDef_t * ) (AHB1_BASEADDR + 0x3800UL))
+
+// GPIO clock enable
+#define GPIOA_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 0U)) // GPIO A CLOCK ENABLE
+#define GPIOB_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 1U)) // GPIO B CLOCK ENABLE
+#define GPIOC_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 2U)) // GPIO C CLOCK ENABLE
+#define GPIOD_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 3U)) // GPIO D CLOCK ENABLE
+#define GPIOE_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 4U)) // GPIO E CLOCK ENABLE
+#define GPIOF_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 5U)) // GPIO F CLOCK ENABLE
+#define GPIOG_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 6U)) // GPIO G CLOCK ENABLE
+#define GPIOH_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 7U)) // GPIO H CLOCK ENABLE
+#define GPIOI_CLK_ENB() (RCC->AHB1ENR |= (0x01U << 8U)) // GPIO I CLOCK ENABLE
+
+#define GPIOA_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 0U)) // GPIO A CLOCK DISABLE
+#define GPIOB_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 1U)) // GPIO B CLOCK DISABLE
+#define GPIOC_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 2U)) // GPIO C CLOCK DISABLE
+#define GPIOD_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 3U)) // GPIO D CLOCK DISABLE
+#define GPIOE_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 4U)) // GPIO E CLOCK DISABLE
+#define GPIOF_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 5U)) // GPIO F CLOCK DISABLE
+#define GPIOG_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 6U)) // GPIO G CLOCK DISABLE
+#define GPIOH_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 7U)) // GPIO H CLOCK DISABLE
+#define GPIOI_CLK_DIS() (RCC->AHB1ENR &= ~(0x01U << 8U)) // GPIO I CLOCK DISABLE
+
+
 
 #include "stm32f407xx_gpio_driver.h"
 
