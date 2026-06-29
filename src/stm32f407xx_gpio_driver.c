@@ -35,12 +35,63 @@ void GPIO_Init(GPIO_RegDef_t * GPIOx, GPIO_PinConf_t GPIOPinConf){
 
 void GPIO_WritePin(GPIO_RegDef_t * GPIOx, uint8_t PinNumber, GPIO_PinState_e PinState){
 
+    // if (PinState == GPIO_PIN_LOW){
+    //     //clear the output pin
+    //     GPIOx->ODR &= ~(0x01U << PinNumber);
+    // }
+    // else{
+    //     // set the output pin
+    //     GPIOx->ODR |= (0x01U << PinNumber);
+    // }
+
+    /*
+        the above code can trigger race condition so im rewriting it
+    */
+
+    //This new code uses the BSRR which just writes to the reg in one go 
+    /*
+        the previous method requires read-modify-write which can be interupted by an isr
+        and during the isr it can also write to the odr.
+        when exiting the isr and I GO BACK  and rewrite what the isr did, this will cause bugs.
+    */
     if (PinState == GPIO_PIN_LOW){
-        //clear the output pin
-        GPIOx->ODR &= ~(0x01U << PinNumber);
+        GPIOx->BSRR = (0x01U << (PinNumber + 16)); // reset pin via BSRR
     }
     else{
-        // set the output pin
-        GPIOx->ODR |= (0x01U << PinNumber);
+        GPIOx->BSRR = (0x01U << PinNumber); // set pin via BSRR
+    }
+    
+   
+}
+
+uint8_t GPIO_ReadPin(GPIO_RegDef_t * GPIOx, uint8_t PinNumber){
+    uint8_t ret;
+    /*
+        bit shift the bit in question to the LSB position then mask
+        it to clean the rest of the register so that
+        only the bit in question is the only one left.
+    */
+    ret = (GPIOx->IDR >> PinNumber) & 0x01U;
+    return ret;
+}
+
+void GPIO_TogglePin(GPIO_RegDef_t * GPIOx, uint8_t PinNumber){
+    // so i need to find a register that keeps track of whether the gpio is outputtting or not
+    // the register is ODR
+
+    uint16_t OutputData = GPIOx->ODR;
+    // next i need to mask this register with the PinNUmber parameter
+    /*
+        instead of the doing that i will resuse code from above
+        this shifts the bit to the lsb position and we apply the AND function
+        to isolate the lsb.
+    */
+    uint16_t OutputBit = (OutputData >> PinNumber) & 0x01U;
+
+    if(OutputBit){
+        GPIOx->ODR &= ~(0x01U << PinNumber); // clear output pin
+    }
+    else{
+        GPIOx->ODR |= (0x01U << PinNumber); // set output pin
     }
 }
