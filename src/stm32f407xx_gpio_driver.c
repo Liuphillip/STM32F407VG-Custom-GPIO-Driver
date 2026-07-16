@@ -1,8 +1,25 @@
+/*
+ * Document Dependency:
+ * - Device: STM32F407
+ * - Datasheet: RM0090 Reference manual
+ */
+
 #include "stm32f407xx.h"
 
 void GPIO_Init(GPIO_RegDef_t * GPIOx, GPIO_PinConf_t GPIOPinConf){
-    // configure pin mode
+
+    // ------------------------------------------------------------------------
+    // Configure Pin Mode
+    // Datasheet Ref: Section 8.4.1 GPIO port mode register (GPIOx_MODER) 
+    // 00: Input (reset state)
+    // 01: General purpose output mode
+    // 10: Alternate function mode
+    // 11: Analog mode
+    // ------------------------------------------------------------------------
+
+    // clear bits first to ensure clean slate
     GPIOx->MODER &= ~(0x03U << GPIOPinConf.GPIO_PinNumber * 2);
+    // set bit
     GPIOx->MODER |= (GPIOPinConf.GPIO_PinMode << GPIOPinConf.GPIO_PinNumber * 2);
 
     if(GPIOPinConf.GPIO_PinMode == GPIO_MODE_ALT || GPIOPinConf.GPIO_PinMode == GPIO_MODE_OUTPUT){
@@ -94,4 +111,18 @@ void GPIO_TogglePin(GPIO_RegDef_t * GPIOx, uint8_t PinNumber){
     else{
         GPIOx->ODR |= (0x01U << PinNumber); // set output pin
     }
+}
+
+void GPIO_LockPin(GPIO_RegDef_t * GPIOx, uint8_t PinNumber){
+    uint32_t LockKey = (0x01 << 16U);
+    uint32_t PortPin = (0x01 << PinNumber);
+
+    LockKey |= PortPin;
+
+    // Lock Key write sequence
+    GPIOx->LCKR = LockKey | PortPin;
+    GPIOx->LCKR = PortPin;
+    GPIOx->LCKR = LockKey | PortPin;
+    (void)GPIOx->LCKR;
+
 }

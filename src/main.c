@@ -77,6 +77,8 @@ int main(void){
     RedLED_Init();
     UserButton_Init();
 
+    // Locks blue led register configuration;
+    GPIO_LockPin(GPIOD, GPIO_PIN_NUM_15);
 
     while(1){
         // if (GPIO_ReadPin(GPIOA, GPIO_PIN_NUM_0) == GPIO_PIN_HIGH){
